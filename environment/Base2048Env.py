@@ -186,3 +186,53 @@ class Base2048Env(gym.Env):
       plt.show()
 
     return fig, ax
+
+  def render2(self):
+
+    # todo review how can use this
+
+    cell_colors = {
+      0: '#FFFFFF',
+      2: '#EEE4DA',
+      4: '#ECE0C8',
+      8: '#ECB280',
+      16: '#EC8D53',
+      32: '#F57C5F',
+      64: '#E95937',
+      128: '#F3D96B',
+      256: '#F2D04A',
+      512: '#E5BF2E',
+      1024: '#E2B814',
+      2048: '#EBC502',
+      4096: '#00A2D8',
+      8192: '#9ED682',
+      16384: '#9ED682',
+      32768: '#9ED682',
+      65536: '#9ED682',
+      131072: '#9ED682',
+    }
+
+    board = np.random.choice(2 ** np.arange(0, 17 + 1), size=self.shape)
+    # board = 2 ** board
+    board[board == 1] = 0
+
+    ncols = 4
+    nrows = 4
+
+    fig = plt.figure(figsize=(3, 3))
+    axes = [fig.add_subplot(nrows, ncols, r * ncols + c) for r in range(0, nrows) for c in range(1, ncols + 1)]
+
+    # add some data
+    v = np.reshape(board, -1)
+    for i, ax in enumerate(axes):
+      ax.text(0.5, 0.5, str(int(v[i])) if int(v[i]) > 0 else ' ', horizontalalignment='center',
+              verticalalignment='center')
+      ax.set_facecolor(cell_colors[int(v[i])])
+
+    # remove the x and y ticks
+    for ax in axes:
+      ax.set_xticks([])
+      ax.set_yticks([])
+
+    plt.tight_layout()
+    plt.show()
