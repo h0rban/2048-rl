@@ -134,8 +134,6 @@ class Base2048Env(gym.Env):
     plt.tight_layout()
     plt.show()
 
-    return board
-
   def _sample_tiles(self, count=1):
     """Sample tile 2 or 4."""
 
