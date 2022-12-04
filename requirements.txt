@@ -2,5 +2,6 @@ gym
 tqdm
 numpy
 pandas
+pygame
 matplotlib
 stable-baselines

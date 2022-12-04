@@ -1,10 +1,10 @@
-from Base2048Env import Base2048Env
+from environment.Base2048Env import Base2048Env
 
 env = Base2048Env()
 env.seed(42)
 
 env.reset()
-env.render()
+env.render(True)
 
 moves, done = 0, False
 
@@ -18,4 +18,4 @@ while not done:
 
   print('\nTotal Moves: {}'.format(moves))
 
-env.render()
+env.render(True)
