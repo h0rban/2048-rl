@@ -4,7 +4,7 @@ from environment.Base2048Env import Base2048Env
 
 
 def render_plot(_env, _screen):
-  fig = _env.render()
+  fig, _ = _env.render()
   fig.canvas.draw()
   surface = pygame.image.frombuffer(fig.canvas.tostring_rgb(), fig.canvas.get_width_height(), 'RGB')
   _screen.blit(surface, (4, 4))
