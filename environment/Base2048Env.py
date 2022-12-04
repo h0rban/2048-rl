@@ -18,7 +18,7 @@ class Base2048Env(gym.Env):
     DOWN: 'down',
   }
 
-  def __init__(self, width=4, height=4, max_invalid_moves=16):
+  def __init__(self, width=4, height=4, max_invalid_moves=16, dtype=np.int8):
 
     if width < 1 or height < 1:
       raise ValueError('expecting width and height to be positive')
@@ -29,8 +29,9 @@ class Base2048Env(gym.Env):
     self.shape = (width, height)
     self.max_power = 1 + width * height
     self.max_invalid_moves = max_invalid_moves
+    self.dtype = dtype
 
-    self.observation_space = spaces.Box(low=0, high=self.max_power, shape=self.shape, dtype=np.int64)
+    self.observation_space = spaces.Box(low=0, high=self.max_power, shape=self.shape, dtype=self.dtype)
     self.action_space = spaces.Discrete(4)
 
     # Internal Variables
@@ -85,7 +86,7 @@ class Base2048Env(gym.Env):
     """Place 2 tiles on empty board."""
 
     self.score, self.n_invalid_moves = 0, 0
-    self.board = np.zeros(self.shape, dtype=np.int64)
+    self.board = np.zeros(self.shape, dtype=self.dtype)
     self._place_random_tiles(self.board, count=2)
 
     return self.board
@@ -124,7 +125,7 @@ class Base2048Env(gym.Env):
       row = np.pad(np.array(result_row), (0, self.shape[0] - len(result_row)), 'constant', constant_values=(0,))
       result.append(row)
 
-    return score, np.array(result, dtype=np.int64)
+    return score, np.array(result, dtype=self.dtype)
 
   @staticmethod
   def _try_merge(row):
