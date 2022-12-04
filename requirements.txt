@@ -1,0 +1,6 @@
+gym
+tqdm
+numpy
+pandas
+matplotlib
+stable-baselines
