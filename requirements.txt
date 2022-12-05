@@ -1,5 +1,6 @@
 gym
 tqdm
+torch
 numpy
 pandas
 pygame
