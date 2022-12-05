@@ -1,10 +1,11 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from agents.random_agent import RandomAgent
 from environment.Base2048Env import Base2048Env
-from utils import plot_curves
+from utils.plotting import plot_curves
+import matplotlib.pyplot as plt
+
 
 
 def train(_env, agent_class, params, episodes):
