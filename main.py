@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from agents.td_agent import TDAgent
 from agents.random_agent import RandomAgent
 from environment.Base2048Env import Base2048Env
 from utils.plotting import plot_curves
 import matplotlib.pyplot as plt
-
 
 
 def train(_env, agent_class, params, episodes):
@@ -21,16 +21,21 @@ def train(_env, agent_class, params, episodes):
     # variables for statistics
     t = 0
 
-    # reset the environment and get the first action
+    # reset the environment
     state = _env.reset()
-    action = _agent.get_action(state)
 
     done = False
     while not done:
-      next_state, reward, done, *_ = _env.step(action)
-      next_action = _agent.get_action(next_state)
-      _agent.update(state, action, reward, next_state, next_action)
-      state, action = next_state, next_action
+
+      # get an action
+      action = _agent.get_action(state)
+
+      # take a step and record reward and observation
+      next_state, reward, done, info = _env.step(action)
+      after_state = info['after_state']
+
+      # update the agent
+      _agent.update(state, action, reward, after_state, next_state)
 
       # update stats
       t += 1
@@ -61,7 +66,6 @@ def process_training_results(_results, precision: int = 4):
   # record trained_agents, episode lengths, final scores, max tiles, max tile distributions
   _agents, episode_lengths, final_scores, max_tiles, max_tile_distribution = [], [], [], [], {}
   for _agent, _result in _results:
-
     # record episode lengths, final scores, max tiles
     episode_lengths.append(_result.episode_length)
     final_scores.append(_result.final_score)
@@ -92,22 +96,42 @@ def process_training_results(_results, precision: int = 4):
 agents = [
 
   # RandomAgent,
+  # {
+  #   'agent_class': RandomAgent,
+  #   'agent_params': {},
+  #   'experiment_params': {
+  #     'trials': 3,
+  #     'episodes': 10,
+  #   },
+  #   'evaluation_params': {
+  #     'episodes': 10
+  #   }
+  # },
+
+  # TDAgent
   {
-    'agent_class': RandomAgent,
-    'agent_params': {},
-    'experiment_params': {
-      'trials': 3,
-      'episodes': int(1e1),
+    'agent_class': TDAgent,
+    'agent_params': {
+      'alpha': 1e-5,
+      'gamma': 1,
     },
-  },
+    'experiment_params': {
+      'trials': 1,
+      'episodes': 500_000,
+    },
+    'evaluation_params': {
+      'episodes': 30
+    }
+  }
 
 ]
 
 # run experiments, record training results
 for index, agent in enumerate(agents):
   exp_results = run_experiment(Base2048Env(), agent['agent_class'], agent['agent_params'], **agent['experiment_params'])
-  agents[index] |= {'training_results': process_training_results(exp_results)}
-
+  agents[index] |= {
+    'training_results': process_training_results(exp_results)
+  }
 
 # plot training results
 for agent in agents:
@@ -124,6 +148,8 @@ for agent in agents:
   # plt.show()
 
 # todo agent evaluation - something like tile distribution
+# evaluation
+
+# will need to pick an agent to evaluate or average all algents
 
 print('done')
-

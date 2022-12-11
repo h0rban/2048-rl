@@ -48,20 +48,25 @@ class Base2048Env(gym.Env):
     """Rotate board aligned with left action"""
 
     # Align board action with left action
-    rotated_obs = np.rot90(self.board, k=action)
-    reward, updated_obs = self._slide_left_and_merge(rotated_obs)
+    reward, after_state = self.get_after_state(self.board, action)
 
     # check if the move was valid
-    if (rotated_obs == updated_obs).all():
+    if np.equal(self.board, after_state).all():
       self.n_invalid_moves += 1
     else:
       self.n_invalid_moves = 0
       self.score += reward
-      self.board = np.rot90(updated_obs, k=4 - action)
+      self.board = after_state
       self._place_random_tiles(self.board, count=1)
 
     done = self.is_done()
-    return self.board, reward, done, {}
+    return self.board, reward, done, {'after_state': after_state}
+
+  def get_after_state(self, board, action):
+    # Align board action with left action
+    rotated_obs = np.rot90(board, k=action)
+    reward, updated_obs = self._slide_left_and_merge(rotated_obs)
+    return reward, np.rot90(updated_obs, k=4 - action)
 
   def is_done(self):
 
